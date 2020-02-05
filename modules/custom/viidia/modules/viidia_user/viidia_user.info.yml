@@ -1,0 +1,10 @@
+name: 'Viidia User'
+type: module
+description: 'Extend User feature for Viidia'
+# core: 8.x
+package: Viidia
+
+version: '8.0'
+core: '8.x'
+project: 'viidia_user'
+datestamp: 1487876585

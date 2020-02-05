@@ -1,0 +1,20 @@
+<?php
+/**
+ * Implements hook_theme().
+ */
+function invite_by_email_rest_theme($existing, $type, $theme, $path) {
+    return [
+        'invite_by_email_viidium' => [
+            'variables' => [
+                'body' => NULL,
+                'invitee_name' => NULL,
+                'inviter_image' => NULL,
+                'inviter_roles' => NULL,
+                'inviter_name' => NULL,
+                'inviter_url' => NULL,
+                'inviter_description' => NULL,
+                'accept_link' => NULL
+            ],
+        ],
+    ];
+}

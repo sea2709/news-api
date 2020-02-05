@@ -1,0 +1,11 @@
+name: 'Taxonomy Term List REST'
+type: module
+description: 'List terms via REST'
+package: 'Taxonomy'
+# core: 8.x
+
+# Information added by Drupal.org packaging script on 2018-01-09
+version: '8.0'
+core: '8.x'
+project: 'taxonomy_term_list_rest'
+datestamp: 1515536887

@@ -1,0 +1,38 @@
+.viidia-album-embed-widget {
+  text-align: center;
+  display: block;
+}
+
+.viidia-album-embed-widget__container {
+  position: relative;
+  display: inline-block;
+}
+
+.viidia-album-embed-widget__container:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, .75);
+}
+
+.viidia-album-embed-widget__container .viidia-album-embed-widget__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  color: #FFF;
+  text-align: left;
+}
+
+.viidia-album-embed-widget__container .viidia-album-embed-widget__title {
+  font-size: 20px;
+  display: block;
+}
+
+.viidia-album-embed-widget__container .viidia-album-embed-widget__count {
+  display: block;
+}

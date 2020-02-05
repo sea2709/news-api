@@ -1,0 +1,300 @@
+viidia.invitations:
+  path: '/user/{user}/invitations'
+  defaults:
+    _controller: '\Drupal\viidia\Controller\UserController::invitations'
+  requirements:
+    _role: 'authenticated'
+
+viidia.submitarticles:
+  path: '/user/{user}/submitarticles'
+  defaults:
+    _controller: '\Drupal\viidia\Controller\UserController::submitarticles'
+  requirements:
+    _role: 'authenticated'
+
+viidia.configuration:
+  path: '/viidia/api/getConfigurations'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getConfigurations'
+  requirements:
+    _permission: 'access content'
+
+viidia.admin_config:
+  path: '/admin/config/viidia'
+  defaults:
+    _form: '\Drupal\viidia\Form\ViidiaSettingsForm'
+    _title: 'Viidia Settings'
+  requirements:
+    _permission: 'administrator'
+  options:
+      _admin_route: TRUE
+
+viidia.getArticleCategories:
+  path: '/viidia/api/getArticleCategories'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getArticleCategories'
+  requirements:
+    _permission: 'access content'
+
+viidia.getPrevArticlesInCategory:
+  path: '/viidia/api/getPrevArticlesInCategory/{articleId}/{categoryId}/{numberOfArticles}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getPrevArticlesInCategory'
+    numberOfArticles: 3
+  requirements:
+    _permission: 'access content'
+    articleId: ^\d+
+    categoryId: ^\d+
+
+viidia.getNextArticlesInCategory:
+  path: '/viidia/api/getNextArticlesInCategory/{articleId}/{categoryId}/{numberOfArticles}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getNextArticlesInCategory'
+    numberOfArticles: 3
+  requirements:
+    _permission: 'access content'
+    articleId: ^\d+
+    categoryId: ^\d+
+
+viidia.getArticlesByCategory:
+  path: '/viidia/api/getArticlesByCategory/{categoryId}/{pageNumber}/{articlesPerPage}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getArticlesByCategory'
+    pageNumber: 1
+    articlesPerPage: 10
+  requirements:
+    _permission: 'access content'
+    categoryId: ^\d+
+
+viidia.searchArticles:
+  path: '/viidia/api/searchArticles/{pageNumber}/{articlesPerPage}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::searchArticles'
+    pageNumber: 1
+    articlesPerPage: 10
+  requirements:
+    _permission: 'access content'
+
+viidia.getFeaturedArticles:
+  path: '/viidia/api/getFeaturedArticles/{limit}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getFeaturedArticles'
+    limit: 5
+  requirements:
+    _permission: 'access content'
+
+viidia.getLatestArticles:
+  path: '/viidia/api/getLatestArticles/{from}/{limit}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getLatestArticles'
+    from: 5
+    limit: 5
+  requirements:
+    _permission: 'access content'
+
+viidia.getTrendingArticles:
+  path: '/viidia/api/getTrendingArticles/{pageNumber}/{articlesPerPage}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getTrendingArticles'
+    pageNumber: 1,
+    articlesPerPage: 20
+  requirements:
+    _permission: 'access content'
+
+viidia.getArticleById:
+  path: '/viidia/api/getArticleById/{articleId}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getArticleById'
+  requirements:
+    _permission: 'access content'
+
+viidia.hitArticle:
+  path: '/viidia/api/hitArticle/{articleId}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::hitArticle'
+  requirements:
+    _permission: 'access content'
+
+viidia.getNextArticlesById:
+  path: '/viidia/api/getNextArticlesById/{articleId}/{numberOfArticles}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getNextArticlesById'
+    numberOfArticles: 1
+  requirements:
+    _permission: 'access content'
+
+viidia.getPreviousArticlesById:
+  path: '/viidia/api/getPreviousArticlesById/{articleId}/{numberOfArticles}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getPreviousArticlesById'
+    numberOfArticles: 1
+  requirements:
+    _permission: 'access content'
+
+viidia.getPreviousAndNextArticlesByIdAndPage:
+  path: '/viidia/api/getPreviousAndNextArticlesByIdAndPage'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getPreviousAndNextArticlesByIdAndPage'
+  requirements:
+    _permission: 'access content'
+
+viidia.getLatestPhotoSets:
+  path: '/viidia/api/getLatestPhotoSets/{from}/{limit}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\PhotoController::getLatestPhotoSets'
+    from: 0
+    limit: 3
+  requirements:
+    _permission: 'access content'
+
+viidia.getPhotoSetById:
+  path: '/viidia/api/getPhotoSetById/{id}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\PhotoController::getPhotoSetById'
+  requirements:
+    _permission: 'access content'
+
+viidia.getPrevAndNextPhotoSet:
+  path: '/viidia/api/getPrevAndNextPhotoSet/{id}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\PhotoController::getPrevAndNextPhotoSet'
+  requirements:
+    _permission: 'access content'
+
+viidia.getLatestVideos:
+  path: '/viidia/api/getLatestVideos/{limit}/{pageNumber}/{videosPerPage}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\VideoController::getLatestVideos'
+    limit: 3,
+    pageNumber: 1,
+    videosPerPage: 20
+  requirements:
+    _permission: 'access content'
+
+viidia.importSearch:
+  path: '/viidia/api/importSearch'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ImportController::search'
+    numberOfArticles: 1
+  requirements:
+    _permission: 'administer'
+
+viidia.getLocationInfoByName:
+  path: '/viidia/api/getLocationInfoByName/{name}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getLocationInfoByName'
+  requirements:
+    _permission: 'access content'
+
+viidia.getLocationInfoById:
+  path: '/viidia/api/getLocationInfoById/{locationId}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::getLocationInfoById'
+  requirements:
+    _permission: 'access content'
+
+#viidia.updateExternalReferral:
+#  path: '/admin/viidia/updateExternalReferral/{categoryId}'
+#  methods: [GET]
+#  defaults:
+#    _controller: '\Drupal\viidia\Controller\ViidiaController::updateExternalReferral'
+#  requirements:
+#    _permission: 'administer'
+#
+#viidia.updateCategory:
+#  path: '/viidia/api/updateCategory/{fromCatId}/{toCatId}'
+#  methods: [GET]
+#  defaults:
+#    _controller: '\Drupal\viidia\Controller\ViidiaController::updateCategory'
+#  requirements:
+#    _permission: 'administer'
+
+viidia.updateSource:
+  path: '/viidia/api/updateSource'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\ViidiaController::updateSource'
+  requirements:
+    _permission: 'administer'
+
+viidia.getCollections:
+  path: '/viidia/api/getCollections'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\CollectionController::getCollections'
+  requirements:
+    _permission: 'access content'
+
+viidia.getCollectionById:
+  path: '/viidia/api/getCollectionById/{collectionId}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\CollectionController::getCollectionById'
+  requirements:
+    _permission: 'access content'
+
+viidia.getGroups:
+  path: '/viidia/api/getGroups'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\GroupController::getGroups'
+  requirements:
+    _permission: 'access content'
+
+viidia.getGroupById:
+  path: '/viidia/api/getGroupById/{groupId}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\GroupController::getGroupById'
+  requirements:
+    _permission: 'access content'
+
+viidia.addArticleToGroup:
+  path: '/viidia/api/addArticleToGroup/{groupId}/{articleId}'
+  methods: [GET]
+  defaults:
+    _controller: '\Drupal\viidia\Controller\GroupController::addArticleToGroup'
+  requirements:
+    _permission: 'access content'
+
+article.createalbum:
+  path: '/admin/viidia/article/createAlbum/{id}'
+  defaults:
+    _form: '\Drupal\viidia\Form\CreateAlbumForm'
+    _title: 'Create Album'
+  requirements:
+    _permission: 'administer filters'
+  options:
+    _admin_route: TRUE
+
+article.createvideo:
+  path: '/admin/viidia/article/createVideo/{id}'
+  defaults:
+    _form: '\Drupal\viidia\Form\CreateVideoForm'
+    _title: 'Create Video'
+  requirements:
+    _permission: 'administer'
+  options:
+    _admin_route: TRUE
+

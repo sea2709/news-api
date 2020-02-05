@@ -1,0 +1,17 @@
+<?php
+/**
+ * Implements hook_ENTITY_TYPE_load() for node entities.
+ */
+function viidia_article_node_load(array $entities)
+{
+    $filter = new \Drupal\rel_to_abs\Plugin\Filter\RelToAbs(array(), 'rel_to_abs', array('provider' => 'rel_to_abs'));
+    foreach ($entities as $entity) {
+        if ($entity->getType() === 'article') {
+            $body = $entity->body->getValue();
+            if (!empty($body[0]['value'])) {
+                $body[0]['value'] = $filter->process($body[0]['value'], NULL)->getProcessedText();
+                $entity->body->setValue($body);
+            }
+        }
+    }
+}

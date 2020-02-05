@@ -1,0 +1,15 @@
+name: Invite by email REST
+type: module
+description: Allow users to invite others to the site by sending the invitation by email.
+# core: 8.x
+package: Invite
+
+dependencies:
+  - invite
+  - invite_by_email
+  - viidia
+
+version: '8.0'
+core: '8.x'
+project: 'invite_by_email_rest'
+datestamp: 1498500248

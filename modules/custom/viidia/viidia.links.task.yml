@@ -1,0 +1,9 @@
+entity.user.invitations:
+  title: 'Invitations'
+  route_name: viidia.invitations
+  base_route: entity.user.canonical
+
+entity.user.submitarticles:
+  title: 'Submit Articles'
+  route_name: viidia.submitarticles
+  base_route: entity.user.canonical

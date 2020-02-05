@@ -1,0 +1,23 @@
+<table>
+    <tbody>
+        {% for section in sections %}
+            <tr style="background: #EEE">
+                <td>{{ section.id }}</td>
+                <td><strong><a href="{{ section.url }}">{{ section.name }}</a></strong></td>
+                <td></td>
+                <td>{{ section.items | length }}</td>
+            </tr>
+            {% for item in section.items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td><a href="{{ item.url }}">{{ item.name }}</a></td>
+                    <td colspan="2">
+                        {% for photo in item.photos %}
+                            <img src="{{ photo }}" />
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>

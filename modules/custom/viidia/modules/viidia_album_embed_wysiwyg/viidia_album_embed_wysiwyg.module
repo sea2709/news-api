@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Module file for viidia_album_embed_wysiwyg.
+ */
+
+use Drupal\editor\Entity\Editor;
+
+/**
+ * Implements hook_ckeditor_css_alter().
+ * @param array $css
+ * @param Editor $editor
+ */
+function viidia_album_embed_wysiwyg_ckeditor_css_alter(array &$css, Editor $editor) {
+  $css[] = drupal_get_path('module', 'viidia_album_embed_wysiwyg') . '/plugin/plugin.css';
+}

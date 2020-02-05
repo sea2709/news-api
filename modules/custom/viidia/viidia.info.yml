@@ -1,0 +1,8 @@
+name: Viidia
+description: Viidia
+package: Viidia
+
+type: module
+core: 8.x
+
+configure: viidia.settings

@@ -1,0 +1,5 @@
+services:
+  viidia.articles_helper:
+    class: \Drupal\viidia\Utility\ArticlesHelper
+  viidia.images_helper:
+      class: \Drupal\viidia\Utility\ImagesHelper

@@ -1,0 +1,246 @@
+<?php
+
+/**
+ * Implements hook_entity_update().
+ */
+function viidia_zoho_creator_entity_update(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $config = \Drupal::config('viidia_zoho_creator.settings');
+    $settings = $config->get();
+
+    if ($settings['viidia_zoho_creator_sync']) {
+        $type = $entity->bundle();
+
+        if ($entity->getEntityTypeId() === 'webform_submission' && $type === 'contribute_article') {
+            if ($entity->get('sticky')->value) {
+                $data = $entity->getData();
+                if (!empty($data['article_link'])) {
+                    $draftArticle = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(
+                        ['type' => 'article', 'status' => 0, 'field_submission_id' => $entity->id()]
+                    );
+                    if (empty($draftArticle)) {
+                        $owner = $entity->getOwner();
+
+                        $articleData = [
+                            'type' => 'article',
+                            'title' => 'Submission #' . $entity->id(),
+                            'status' => 0,
+                            'field_source_url' => [
+                                'uri' => $data['article_link']
+                            ],
+                            'field_submission_id' => $entity->id(),
+                            'field_curated_by' => [
+                                'target_id' => $owner->id()
+                            ]
+                        ];
+                        if ($data['category']) {
+                            $articleData['field_category'] = [
+                                'target_id' => $data['category']
+                            ];
+                        }
+                        $node = \Drupal\node\Entity\Node::create($articleData);
+                        $articleId = $node->save();
+
+                        if ($articleId) {
+                            $curatedTime = $entity->getCreatedTime();
+                            $uri = 'https://creator.zoho.com/api/' . $settings['viidia_zoho_creator_zoho_creator']
+                                . '/xml/' . $settings['viidia_zoho_creator_application_name']
+                                . '/form/' . $settings['viidia_zoho_creator_articles_form_name'] . '/record/add';
+                            $client = \Drupal::httpClient();
+                            $client->request('POST', $uri, [
+                                'form_params' => [
+                                    'authtoken' => $settings['viidia_zoho_creator_auth_token'],
+                                    'scope' => 'creatorapi',
+                                    'Title' => 'Submission #' . $entity->id(),
+                                    'Source_URL' => $data['article_link'],
+                                    'Curated_Date' => \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($curatedTime)->format('d-M-Y H:i:s'),
+                                    'Curated_By' => $owner->field_zoho_creator_record_id->value,
+                                    'Article_ID' => $node->id(),
+                                    'Article_Type' => 'Article'
+                                ]
+                            ]);
+                        }
+                    }
+                }
+            } else {
+                $draftArticle = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(
+                    ['type' => 'article', 'status' => 0, 'field_submission_id' => $entity->id()]
+                );
+
+                if (!empty($draftArticle)) {
+                    $draftArticle = reset($draftArticle);
+
+                    $uri = 'https://creator.zoho.com/api/' . $settings['viidia_zoho_creator_zoho_creator']
+                        . '/xml/' . $settings['viidia_zoho_creator_application_name']
+                        . '/form/' . $settings['viidia_zoho_creator_articles_form_name'] . '/record/delete';
+                    $client = \Drupal::httpClient();
+                    $client->request('POST', $uri, [
+                        'form_params' => [
+                            'authtoken' => $settings['viidia_zoho_creator_auth_token'],
+                            'scope' => 'creatorapi',
+                            'criteria' => 'Article_ID=' . $draftArticle->id()
+                        ]
+                    ]);
+
+                    $draftArticle->delete();
+                }
+            }
+        } elseif ($type === 'article' || $type === 'video') {
+            if ($entity->isPublished()) {
+                $submissionId = $entity->field_submission_id->value;
+                if (!empty($submissionId)) {
+                    $submission = \Drupal::entityTypeManager()->getStorage('webform_submission')->load($submissionId);
+                    if ($submission) {
+                        $submission->delete();
+                        $entity->field_submission_id->setValue('');
+                        $entity->save();
+                    }
+                }
+
+                $formParams = [
+                    'authtoken' => $settings['viidia_zoho_creator_auth_token'],
+                    'scope' => 'creatorapi',
+                    'criteria' => 'Article_ID=' . $entity->id(),
+                    'Title' => $entity->getTitle()
+                ];
+
+                if ($type === 'article') {
+                    $body = $entity->body->getValue();
+                    $formParams['Description'] = isset($body[0]['summary']) ? $body[0]['summary'] : '';
+                }
+
+                $originalEntity = $entity->original;
+                if (empty($originalEntity) || !$originalEntity->isPublished()) {
+                    $now = new \Drupal\Core\Datetime\DrupalDateTime();
+                    $formParams['Input_Date'] = $now->format('d-M-Y H:i:s');
+                }
+
+                $uri = 'https://creator.zoho.com/api/' . $settings['viidia_zoho_creator_zoho_creator']
+                    . '/xml/' . $settings['viidia_zoho_creator_application_name']
+                    . '/form/' . $settings['viidia_zoho_creator_articles_form_name'] . '/record/update';
+                $client = \Drupal::httpClient();
+                $client->request('POST', $uri, [
+                    'form_params' => $formParams
+                ]);
+            }
+        }
+    }
+}
+
+function viidia_zoho_creator_node_delete(Drupal\Core\Entity\EntityInterface $entity) {
+    $config = \Drupal::config('viidia_zoho_creator.settings');
+    $settings = $config->get();
+
+    if ($settings['viidia_zoho_creator_sync']) {
+        $type = $entity->getType();
+        if ($type === 'article' || $type === 'video') {
+            $uri = 'https://creator.zoho.com/api/' . $settings['viidia_zoho_creator_zoho_creator']
+                . '/xml/' . $settings['viidia_zoho_creator_application_name']
+                . '/form/' . $settings['viidia_zoho_creator_articles_form_name'] . '/record/delete';
+            $client = \Drupal::httpClient();
+            $client->request('POST', $uri, [
+                'form_params' => [
+                    'authtoken' => $settings['viidia_zoho_creator_auth_token'],
+                    'scope' => 'creatorapi',
+                    'criteria' => 'Article_ID=' . $entity->id()
+                ]
+            ]);
+        }
+    }
+}
+
+function viidia_zoho_creator_user_insert(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $config = \Drupal::config('viidia_zoho_creator.settings');
+    $settings = $config->get();
+
+    if ($settings['viidia_zoho_creator_sync']) {
+        if ($entity->isActive()) {
+            $roles = $entity->getRoles(true);
+            if (in_array('curator', $roles)) {
+                $createdTime = $entity->getCreatedTime();
+                $lastAccessedTime = $entity->getLastAccessedTime();
+
+                $uri = 'https://creator.zoho.com/api/' . $settings['viidia_zoho_creator_zoho_creator']
+                    . '/xml/' . $settings['viidia_zoho_creator_application_name']
+                    . '/form/' . $settings['viidia_zoho_creator_curators_form_name'] . '/record/add';
+                $client = \Drupal::httpClient();
+                $client->request('POST', $uri, [
+                    'form_params' => [
+                        'authtoken' => $settings['viidia_zoho_creator_auth_token'],
+                        'scope' => 'creatorapi',
+                        'Username' => $entity->getUsername(),
+                        'Display_Name' => $entity->field_name->value,
+                        'Email' => $entity->getEmail(),
+                        'Registered_Date' => \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($createdTime)->format('d-M-Y H:i:s'),
+                        'Last_Accessed_Date' => \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($lastAccessedTime)->format('d-M-Y H:i:s'),
+                        'User_ID' => $entity->id()
+                    ]
+                ]);
+            }
+        }
+    }
+}
+
+function viidia_zoho_creator_user_update(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $config = \Drupal::config('viidia_zoho_creator.settings');
+    $settings = $config->get();
+
+    if ($settings['viidia_zoho_creator_sync']) {
+        if ($entity->isActive()) {
+            $roles = $entity->getRoles(true);
+            if (in_array('curator', $roles)) {
+                $createdTime = $entity->getCreatedTime();
+                $lastAccessedTime = $entity->getLastAccessedTime();
+
+                $uri = 'https://creator.zoho.com/api/' . $settings['viidia_zoho_creator_zoho_creator']
+                    . '/xml/' . $settings['viidia_zoho_creator_application_name']
+                    . '/form/' . $settings['viidia_zoho_creator_curators_form_name'] . '/record/update';
+                $client = \Drupal::httpClient();
+                $client->request('POST', $uri, [
+                    'form_params' => [
+                        'authtoken' => $settings['viidia_zoho_creator_auth_token'],
+                        'scope' => 'creatorapi',
+                        'criteria' => 'User_ID=' . $entity->id(),
+                        'Username' => $entity->getUsername(),
+                        'Display_Name' => $entity->field_name->value,
+                        'Email' => $entity->getEmail(),
+                        'Registered_Date' => \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($createdTime)->format('d-M-Y H:i:s'),
+                        'Last_Accessed_Date' => \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($lastAccessedTime)->format('d-M-Y H:i:s')
+                    ]
+                ]);
+            }
+        }
+    }
+}
+
+function viidia_zoho_creator_entity_operation($entity)
+{
+    if ($entity->bundle() === 'article' && !$entity->isPublished()) {
+        $submissionId = $entity->field_submission_id->value;
+
+        if (!empty($submissionId)) {
+            $operations = [
+                'switchvideo' => [
+                    'title' => t('Switch to Video'),
+                    'weight' => 100,
+                    'url' => \Drupal\Core\Url::fromRoute('viidia_zoho_creator.article.switch_to_video', ['id' => $entity->id()]),
+                ],
+                'unapprove' => [
+                    'title' => t('Unapprove'),
+                    'weight' => 100,
+                    'url' => \Drupal\Core\Url::fromRoute('viidia_zoho_creator.article.unapprove', ['id' => $entity->id()]),
+                ],
+                'send_user_msg' => [
+                    'title' => t('Send Message to User'),
+                    'weight' => 100,
+                    'url' => \Drupal\Core\Url::fromRoute('viidia_zoho_creator.article.sendmsg', ['id' => $entity->id()]),
+                ]
+            ];
+
+            return $operations;
+        }
+    }
+    return [];
+}

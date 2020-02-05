@@ -1,0 +1,9 @@
+viidia_album_embed_wysiwyg.album_dialog:
+  path: '/viidia-album-embed-wysiwyg/dialog/{filter_format}'
+  defaults:
+    _form: '\Drupal\viidia_album_embed_wysiwyg\Form\ViidiaAlbumEmbedDialog'
+    _title: 'Viidia Photoset Form'
+  options:
+    _theme: ajax_base_page
+  requirements:
+    _entity_access: 'filter_format.use'

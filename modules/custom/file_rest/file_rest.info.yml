@@ -1,0 +1,11 @@
+name: 'File REST'
+type: module
+description: 'Submit File via REST'
+package: 'File'
+# core: 8.x
+
+# Information added by Drupal.org packaging script on 2018-01-09
+version: '8.0'
+core: '8.x'
+project: 'file_rest'
+datestamp: 1515536887

@@ -1,0 +1,5 @@
+viidia.admin_config:
+  title: Viidia
+  description: ''
+  parent: system.admin_config
+  route_name: viidia.admin_config

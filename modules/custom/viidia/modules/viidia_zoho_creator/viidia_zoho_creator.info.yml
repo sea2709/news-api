@@ -1,0 +1,13 @@
+name: 'Viidia Zoho Creator'
+type: module
+description: ''
+# core: 8.x
+package: Viidia
+
+dependencies:
+  - viidia
+
+version: '8.0'
+core: '8.x'
+project: 'viidia_zoho_creator'
+datestamp: 1487876585

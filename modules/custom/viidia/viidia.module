@@ -1,0 +1,181 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function viidia_theme($existing, $type, $theme, $path)
+{
+    $variables = array(
+        'invitations' => array(
+            'variables' => array(
+                'form' => null
+            ),
+        ),
+        'articles' => array(
+            'variables' => array(
+                'form' => null
+            ),
+        )
+    );
+    return $variables;
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function viidia_entity_presave(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $type = $entity->bundle();
+    if ($type === 'article' || $type === 'video') {
+        $videoUrl = $entity->field_video_source->getValue();
+        $videoHtml = $entity->field_video_html->value;
+        if (!empty($videoUrl) && empty($videoHtml)) {
+            $videoUrl = $videoUrl[0]['uri'];
+            $query = \Drupal\Component\Utility\UrlHelper::buildQuery(['url' => $videoUrl]);
+            $url = 'http://noembed.com/embed?' . $query;
+            $content = \Drupal::httpClient()->get($url)->getBody()->getContents();
+            if ($content) {
+                $jsonObj = json_decode($content);
+                if (!empty($jsonObj->html)) {
+                    $entity->field_video_html->value = trim($jsonObj->html);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Implements hook_entity_insert().
+ */
+function viidia_entity_insert(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $type = $entity->bundle();
+    if ($type === 'article' && $entity->status->value) {
+        $config = \Drupal::config('viidia.settings');
+        $settings = $config->get();
+
+        if ($settings['viidia_elasticsearch_import']) {
+            $data = \Drupal\viidia\SearchClient::buildArticleBody($entity);
+            $createdDate = \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($entity->getCreatedTime());
+            $data['created'] = $createdDate->format("Y-m-d\TH:i:s") . 'Z';
+
+            $client = \Drupal\viidia\SearchClient::build();
+            $params = [
+                'index' => $settings['viidia_elasticsearch_index'],
+                'type' => 'article',
+                'id' => $entity->id(),
+                'body'  => $data,
+            ];
+
+            $client->index($params);
+        }
+    }
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function viidia_entity_update(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $type = $entity->bundle();
+    if ($type === 'article') {
+        $config = \Drupal::config('viidia.settings');
+        $settings = $config->get();
+        if ($settings['viidia_elasticsearch_import']) {
+            $params = [
+                'index' => $settings['viidia_elasticsearch_index'],
+                'type' => 'article',
+                'id' => $entity->id()
+            ];
+
+            $client = \Drupal\viidia\SearchClient::build();
+
+            $originalEntity = $entity->original;
+            if ($originalEntity->isPublished()) {
+                $isExist = $client->exists($params);
+                if (!$entity->isPublished()) {
+                    if ($isExist) {
+                        $client->delete($params);
+                    }
+                } else {
+                    $data = \Drupal\viidia\SearchClient::buildArticleBody($entity);
+                    if ($isExist) {
+                        $changedDate = \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($entity->getChangedTime());
+                        $data['changed'] = $changedDate->format("Y-m-d\TH:i:s") . 'Z';
+                        $params['body'] = ['doc' => $data];
+
+                        $client->update($params);
+                    } else {
+                        $params['body'] = $data;
+                        $client->index($params);
+                    }
+                }
+            } else {
+                if ($entity->isPublished()) {
+                    $data = \Drupal\viidia\SearchClient::buildArticleBody($entity);
+                    $createdDate = \Drupal\Core\Datetime\DrupalDateTime::createFromTimestamp($entity->getCreatedTime());
+                    $data['created'] = $createdDate->format("Y-m-d\TH:i:s") . 'Z';
+                    $params['body'] = $data;
+
+                    $client->index($params);
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Implements hook_entity_delete().
+ */
+function viidia_entity_delete(Drupal\Core\Entity\EntityInterface $entity)
+{
+    $type = $entity->bundle();
+    if ($type === 'article' && $entity->isPublished()) {
+        $config = \Drupal::config('viidia.settings');
+        $settings = $config->get();
+        if ($settings['viidia_elasticsearch_import']) {
+            $client = \Drupal\viidia\SearchClient::build();
+            $params = [
+                'index' => $settings['viidia_elasticsearch_index'],
+                'type' => 'article',
+                'id' => $entity->id()
+            ];
+            $client->delete($params);
+        }
+    }
+}
+
+/**
+ * Declares entity operations.
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
+ *   The entity on which the linked operations will be performed.
+ *
+ * @return array
+ *   An operations array as returned by
+ *   EntityListBuilderInterface::getOperations().
+ *
+ * @see \Drupal\Core\Entity\EntityListBuilderInterface::getOperations()
+ */
+function viidia_entity_operation($entity) {
+    if ($entity->bundle() === 'article') {
+        $operations = [
+            'createalbum' => [
+                'title' => t('Create Album'),
+                'weight' => 100,
+                'url' => \Drupal\Core\Url::fromRoute('article.createalbum', ['id' => $entity->id()]),
+            ]
+        ];
+
+        if (!empty($entity->field_video_html)) {
+            $operations['createvideo'] = [
+                'title' => t('Create Video'),
+                'weight' => 100,
+                'url' => \Drupal\Core\Url::fromRoute('article.createvideo', ['id' => $entity->id()]),
+            ];
+        }
+
+        return $operations;
+    }
+    return [];
+}

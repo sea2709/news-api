@@ -1,0 +1,8 @@
+working-hours-field-widget-renderer:
+  version: 1.x
+
+  js:
+    js/working-hours-field-widget-renderer.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal

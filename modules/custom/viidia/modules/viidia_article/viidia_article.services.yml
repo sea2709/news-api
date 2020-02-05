@@ -1,0 +1,11 @@
+services:
+  viidia_article.collection_list_node_entity:
+    class: Drupal\viidia_article\Normalizer\CollectionListNodeEntityNormalizer
+    tags:
+     - { name: normalizer, priority: 3 }
+
+  viidia_article.collection_node_entity:
+    class: Drupal\viidia_article\Normalizer\CollectionNodeEntityNormalizer
+    arguments: ['@entity.manager']
+    tags:
+     - { name: normalizer, priority: 2 }

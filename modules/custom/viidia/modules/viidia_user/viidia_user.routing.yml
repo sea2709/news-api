@@ -1,0 +1,9 @@
+viidia_user.admin_config:
+  path: '/admin/config/viidia_user'
+  defaults:
+    _form: '\Drupal\viidia_user\Form\SettingsForm'
+    _title: 'Viidia User Settings'
+  requirements:
+    _permission: 'administrator'
+  options:
+    _admin_route: TRUE

@@ -1,0 +1,560 @@
+PUT /viidia
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "default": {
+          "tokenizer": "standard",
+          "filter": [
+            "standard",
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "event": {
+      "properties": {
+        "instance_name": {
+            "type": "text"
+        },
+        "name": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "categoryName": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "categoryId": {
+          "type": "integer"
+        },
+        "body": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "ticketInfo": {
+          "type": "text"
+        },
+        "sponsors": {
+          "type": "text"
+        },
+        "images": {
+          "type": "text",
+          "index": false
+        },
+        "locationName": {
+          "type": "text"
+        },
+        "address": {
+          "type": "text"
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "country": {
+          "type": "keyword"
+        },
+        "state": {
+          "type": "keyword"
+        },
+        "city": {
+          "type": "keyword"
+        },
+        "zipcode": {
+          "type": "keyword"
+        },
+        "startTime": {
+          "type": "date"
+        },
+        "endTime": {
+          "type": "date"
+        },
+        "timezone": {
+          "type": "text",
+          "index": false
+        },
+        "storage_timezone": {
+          "type": "text",
+          "index": false
+        },
+        "event_id": {
+          "type": "integer"
+        },
+        "organizer": {
+          "properties": {
+            "sections": {
+              "properties": {
+                "name": {
+                  "type": "text"
+                },
+                "body": {
+                  "type": "text"
+                }
+              }
+            }
+          }
+        },
+        "created": {
+          "type": "date"
+        },
+        "changed": {
+          "type": "date"
+        },
+        "searchAll": {
+          "type": "text"
+        }
+      }
+    },
+    "listing": {
+      "properties": {
+        "name": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "type": {
+          "type": "text"
+        },
+        "categoriesName": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "categoriesId": {
+          "type": "integer"
+        },
+        "categoriesTrail": {
+          "type": "integer"
+        },
+        "specialities": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "body": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "phones": {
+          "type": "text",
+          "index": false
+        },
+        "neighborhood": {
+          "type": "text"
+        },
+        "image": {
+          "type": "text",
+          "index": false
+        },
+        "gallery": {
+          "type": "text",
+          "index": false
+        },
+        "facebook": {
+          "type": "text",
+          "index": false
+        },
+        "youtube": {
+          "type": "text",
+          "index": false
+        },
+        "linkedin": {
+          "type": "text",
+          "index": false
+        },
+        "instagram": {
+          "type": "text",
+          "index": false
+        },
+        "website": {
+          "type": "text",
+          "index": false
+        },
+        "email": {
+          "type": "text",
+          "index": false
+        },
+        "workingHours": {
+          "type": "nested"
+        },
+        "timezone": {
+          "type": "text",
+          "index": false
+        },
+        "workingDays": {
+          "type": "nested"
+        },
+        "coordinates": {
+          "type": "geo_shape"
+        },
+        "html": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "additionalInfo": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "keywords": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "address": {
+          "type": "text"
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "country": {
+          "type": "keyword"
+        },
+        "state": {
+          "type": "keyword"
+        },
+        "city": {
+          "type": "keyword"
+        },
+        "zipcode": {
+          "type": "keyword"
+        },
+        "menus": {
+          "properties": {
+            "sections": {
+              "properties": {
+                "name": {
+                  "type": "text"
+                },
+                "id": {
+                  "type": "integer"
+                },
+                "body": {
+                  "type": "text"
+                },
+                "items": {
+                  "properties": {
+                    "name": {
+                      "type": "text",
+                      "copy_to": "searchAll"
+                    },
+                    "price": {
+                      "type": "half_float"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "created": {
+          "type": "date"
+        },
+        "changed": {
+          "type": "date"
+        },
+        "searchAll": {
+          "type": "text"
+        }
+      }
+    },
+    "article": {
+      "properties": {
+        "name": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "body": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "summary": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "source": {
+          "type": "keyword",
+          "index": false
+        },
+        "image": {
+          "type": "text",
+          "index": false
+        },
+        "teaserImage": {
+          "type": "text",
+          "index": false
+        },
+        "categoryId": {
+          "type": "integer"
+        },
+        "categoryName": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "sourceOriginalUrl": {
+          "type": "text",
+          "index": false
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "created": {
+          "type": "date"
+        },
+        "changed": {
+          "type": "date"
+        },
+        "searchAll": {
+          "type": "text"
+        },
+        "articleSource": {
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "text"
+            }
+          }
+        }
+      }
+    },
+    "ad": {
+      "properties": {
+        "name": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "body": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "summary": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "images": {
+          "type": "text",
+          "index": false
+        },
+        "categoryId": {
+          "type": "integer"
+        },
+        "categoryName": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "parentCategoryId": {
+          "type": "integer"
+        },
+        "parentCategoryName": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "publishedDate": {
+          "properties": {
+            "start": {
+              "type": "date"
+            },
+            "end": {
+              "type": "date"
+            },
+            "period": {
+              "type": "integer",
+              "index": false
+            },
+            "timezone": {
+              "type": "text",
+              "index": false
+            }
+          }
+        },
+        "address": {
+          "type": "text"
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "country": {
+          "type": "keyword"
+        },
+        "state": {
+          "type": "keyword"
+        },
+        "city": {
+          "type": "keyword"
+        },
+        "zipcode": {
+          "type": "keyword"
+        },
+        "created": {
+          "type": "date"
+        },
+        "changed": {
+          "type": "date"
+        },
+        "searchAll": {
+          "type": "text"
+        }
+      }
+    },
+    "job": {
+      "properties": {
+        "name": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "body": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "summary": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "images": {
+          "type": "text",
+          "index": false
+        },
+        "categoryId": {
+          "type": "integer"
+        },
+        "categoryName": {
+          "type": "text",
+          "copy_to": "searchAll"
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "publishedDate": {
+          "properties": {
+            "start": {
+              "type": "date"
+            },
+            "end": {
+              "type": "date"
+            },
+            "period": {
+              "type": "integer",
+              "index": false
+            },
+            "timezone": {
+              "type": "text",
+              "index": false
+            }
+          }
+        },
+        "address": {
+          "type": "text"
+        },
+        "location": {
+          "type": "geo_point"
+        },
+        "country": {
+          "type": "keyword"
+        },
+        "state": {
+          "type": "keyword"
+        },
+        "city": {
+          "type": "keyword"
+        },
+        "zipcode": {
+          "type": "keyword"
+        },
+        "employerName": {
+          "type": "text",
+          "index": false
+        },
+        "employerLogo": {
+          "type": "text",
+          "index": false
+        },
+        "detailsUrl": {
+          "type": "text",
+          "index": false
+        },
+        "applyUrl": {
+          "type": "text",
+          "index": false
+        },
+        "source": {
+          "type": "keyword",
+          "index": false
+        },
+        "employmentType": {
+          "type": "keyword"
+        },
+        "sendApplicantsTo": {
+          "type": "text",
+          "index": false
+        },
+        "employer": {
+          "properties": {
+            "address": {
+              "type": "text",
+              "index": false
+            },
+            "body": {
+              "type": "text",
+              "copy_to": "searchAll"
+            },
+            "contact_name": {
+              "type": "text",
+              "index": false
+            },
+            "cover_photo": {
+              "type": "text",
+              "index": false
+            },
+            "email": {
+              "type": "text",
+              "index": false
+            },
+            "facebook": {
+              "type": "text",
+              "index": false
+            },
+            "instagram": {
+              "type": "text",
+              "index": false
+            },
+            "logo": {
+              "type": "text",
+              "index": false
+            },
+            "phone": {
+              "type": "text",
+              "index": false
+            },
+            "send_applicants_to": {
+              "type": "text",
+              "index": false
+            },
+            "website": {
+              "type": "text",
+              "index": false
+            },
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "text",
+              "copy_to": "searchAll"
+            }
+          }
+        },
+        "created": {
+          "type": "date"
+        },
+        "changed": {
+          "type": "date"
+        },
+        "searchAll": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}

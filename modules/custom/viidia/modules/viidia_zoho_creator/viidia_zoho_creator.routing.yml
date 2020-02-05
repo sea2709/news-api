@@ -1,0 +1,57 @@
+viidia_zoho_creator.import_curators:
+  path: '/admin/viidia_zoho_creator/importCurators'
+  defaults:
+    _controller: '\Drupal\viidia_zoho_creator\Controller\CuratorsController::import'
+  requirements:
+    _role: 'administrator'
+  options:
+    _admin_route: TRUE
+
+viidia_zoho_creator.export_curators:
+  path: '/admin/viidia_zoho_creator/exportCurators'
+  defaults:
+    _controller: '\Drupal\viidia_zoho_creator\Controller\CuratorsController::export'
+  requirements:
+    _role: 'administrator'
+  options:
+    _admin_route: TRUE
+
+viidia_zoho_creator.admin_config:
+  path: '/admin/config/viidia_zoho_creator'
+  defaults:
+    _form: '\Drupal\viidia_zoho_creator\Form\SettingsForm'
+    _title: 'Viidia Zoho Creator Settings'
+  requirements:
+    _permission: 'administrator'
+  options:
+      _admin_route: TRUE
+
+viidia_zoho_creator.article.switch_to_video:
+  path: '/admin/viidia_zoho_creator/article/switchToVideo/{id}'
+  defaults:
+    _form: '\Drupal\viidia_zoho_creator\Form\SwitchToVideoForm'
+    _title: 'Switch To Video'
+  requirements:
+    _permission: 'administrator'
+  options:
+    _admin_route: TRUE
+
+viidia_zoho_creator.article.unapprove:
+  path: '/admin/viidia_zoho_creator/article/unapprove/{id}'
+  defaults:
+    _form: '\Drupal\viidia_zoho_creator\Form\UnapproveForm'
+    _title: 'Unapprove'
+  requirements:
+    _permission: 'administrator'
+  options:
+    _admin_route: TRUE
+
+viidia_zoho_creator.article.sendmsg:
+  path: '/admin/viidia_zoho_creator/article/sendmsg/{id}'
+  defaults:
+    _form: '\Drupal\viidia_zoho_creator\Form\SendMsgForm'
+    _title: 'Send Message'
+  requirements:
+    _permission: 'administrator'
+  options:
+    _admin_route: TRUE
